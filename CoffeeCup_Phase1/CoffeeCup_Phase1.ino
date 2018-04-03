@@ -83,7 +83,8 @@ void loop() {
       coffeebutton->save(buttonPushCounter);
       
       // set button counter back to 1 after 35 presses
-      if (buttonPushCounter > 36) {
+      if (buttonPushCounter > 35) {
+        Serial.println(buttonPushCounter);
         coffeebutton->save(35);
         buttonPushCounter = 1;
       }
@@ -95,18 +96,19 @@ void loop() {
     delay(50);
   }
 
-
   // compare the resetButtonState to its previous state
   if (resetButtonState != lastResetButtonState){
     // if the reset button is pushed, set counter back to 0
     if (resetButtonState == HIGH){
       buttonPushCounter = 0;
-      Serial.print("number of button pushes: ");
-      Serial.println(buttonPushCounter);
+      Serial.println("reset");
       coffeebutton->save(buttonPushCounter);
       }
     else {}
-  } else {}
+    // Delay a little bit to avoid bouncing
+    delay(50);
+  }
+
   
   // save the current state as the last state, for next time through the loop
   lastButtonState = buttonState;
