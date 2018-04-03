@@ -2,7 +2,7 @@
 
 #include "config.h"
 
-/************************ Example Starts Here *******************************/
+/************************ Project Starts Here *******************************/
 
 // bottom of cup button is digital pin 5
 #define BUTTON_PIN 5
