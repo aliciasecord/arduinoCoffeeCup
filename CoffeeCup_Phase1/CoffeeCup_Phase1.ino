@@ -1,44 +1,31 @@
-// Adafruit IO Digital Input Example
-// Tutorial Link: https://learn.adafruit.com/adafruit-io-basics-digital-input
-//
-// Adafruit invests time and resources providing this open source code.
-// Please support Adafruit and open source hardware by purchasing
-// products from Adafruit!
-//
-// Written by Todd Treece for Adafruit Industries
-// Copyright (c) 2016 Adafruit Industries
-// Licensed under the MIT license.
-//
-// All text above must be included in any redistribution.
-
 /************************** Configuration ***********************************/
 
-// edit the config.h tab and enter your Adafruit IO credentials
-// and any additional configuration needed for WiFi, cellular,
-// or ethernet clients.
 #include "config.h"
 
 /************************ Example Starts Here *******************************/
 
-// digital pin 5
+// bottom of cup button is digital pin 5
 #define BUTTON_PIN 5
 
-// button state
-bool current = false;
-bool last = false;
+// reset button is digital pin 4
+#define RESET_BUTTON 4
 
 // Variables will change:
 int buttonPushCounter = 0;   // counter for the number of button presses
 int buttonState = 0;         // current state of the button
 int lastButtonState = 0;     // previous state of the button
 
+int resetButtonState = 0;   // current state of reset button
+int lastResetButtonState = 0; // previous state of reset button
+
 // set up the 'digital' feed
 AdafruitIO_Feed *coffeebutton = io.feed("coffeebutton");
 
 void setup() {
 
-  // set button pin as an input
+  // set button pins as an input
   pinMode(BUTTON_PIN, INPUT);
+  pinMode(RESET_BUTTON, INPUT);
 
   // start the serial connection
   Serial.begin(115200);
@@ -73,11 +60,14 @@ void loop() {
   // read the pushbutton input pin:
   buttonState = digitalRead(BUTTON_PIN);
 
+  // read the reset button input pin:
+  resetButtonState = digitalRead(RESET_BUTTON);
+
   // compare the buttonState to its previous state
   if (buttonState != lastButtonState) {
     // if the state has changed, increment the counter
     if (buttonState == HIGH) {
-      // if the current state is HIGH then the button went from off to on:
+      // if the current state is HIGH then the button went from off to on (on means the cup is down, off means someone is drinking):
       buttonPushCounter++;
       
       // set button counter back to 1 after 35 presses
@@ -86,19 +76,33 @@ void loop() {
       }
       else {buttonPushCounter;}
       
-      Serial.println("on");
       Serial.print("number of button pushes: ");
       Serial.println(buttonPushCounter);
       coffeebutton->save(buttonPushCounter);
     } else {
-      // if the current state is LOW then the button went from on to off:
-      Serial.println("off");
     }
     // Delay a little bit to avoid bouncing
     delay(50);
   }
+
+
+  // compare the resetButtonState to its previous state
+  if (resetButtonState != lastResetButtonState){
+    // if the reset button is pushed, set counter back to 0
+    if (resetButtonState == HIGH){
+      buttonPushCounter = 0;
+      Serial.print("number of button pushes: ");
+      Serial.println(buttonPushCounter);
+      coffeebutton->save(buttonPushCounter);
+      }
+    else {}
+  } else {}
+  
   // save the current state as the last state, for next time through the loop
   lastButtonState = buttonState;
+
+  // save the current reset state as the last state for next time through loop
+  lastResetButtonState = resetButtonState;
 }
 
 

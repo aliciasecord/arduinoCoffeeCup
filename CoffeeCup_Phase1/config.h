@@ -13,8 +13,8 @@
 //   - Feather M0 WiFi -> https://www.adafruit.com/products/3010
 //   - Feather WICED -> https://www.adafruit.com/products/3056
 
-#define WIFI_SSID       "CCSMFAIXD"
-#define WIFI_PASS       "CCSinteraction"
+#define WIFI_SSID       "NETGEAR13"
+#define WIFI_PASS       "breezycarrot392"
 
 // comment out the following two lines if you are using fona or ethernet
 #include "AdafruitIO_WiFi.h"
