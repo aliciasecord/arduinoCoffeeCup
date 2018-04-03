@@ -18,6 +18,10 @@ int lastButtonState = 0;     // previous state of the button
 int resetButtonState = 0;   // current state of reset button
 int lastResetButtonState = 0; // previous state of reset button
 
+int currentMillis = 0; // set millis to 0
+int previousMillis = 0; // set time lapse to 0
+int timeSinceLastButton = 0; // set time to 0
+
 // set up the 'digital' feed
 AdafruitIO_Feed *coffeebutton = io.feed("coffeebutton");
 
@@ -63,22 +67,28 @@ void loop() {
   // read the reset button input pin:
   resetButtonState = digitalRead(RESET_BUTTON);
 
+  currentMillis = millis();
+
   // compare the buttonState to its previous state
   if (buttonState != lastButtonState) {
     // if the state has changed, increment the counter
     if (buttonState == HIGH) {
       // if the current state is HIGH then the button went from off to on (on means the cup is down, off means someone is drinking):
-      buttonPushCounter++;
+      timeSinceLastButton = (currentMillis-previousMillis)/1000;
+      previousMillis = currentMillis;
+      buttonPushCounter += timeSinceLastButton/2;
+      Serial.print("number of oz consumed: ");
+      Serial.println(buttonPushCounter);
+      Serial.println(timeSinceLastButton);
+      coffeebutton->save(buttonPushCounter);
       
       // set button counter back to 1 after 35 presses
-      if (buttonPushCounter == 36) {
+      if (buttonPushCounter > 36) {
+        coffeebutton->save(35);
         buttonPushCounter = 1;
       }
       else {buttonPushCounter;}
       
-      Serial.print("number of button pushes: ");
-      Serial.println(buttonPushCounter);
-      coffeebutton->save(buttonPushCounter);
     } else {
     }
     // Delay a little bit to avoid bouncing
